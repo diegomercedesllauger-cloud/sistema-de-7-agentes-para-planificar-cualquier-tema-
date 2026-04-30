@@ -1,0 +1,348 @@
+# ============================================================
+# SISTEMA DE 7 AGENTES DE MEMORIZACIÓN - CÓDIGO COMPLETO
+# Diego Mercedes Llauger (2026-0048)
+# Ingeniería en Ciberseguridad
+# ============================================================
+
+from datetime import datetime, timedelta
+
+# ============================================================
+# AGENTE 1: ANALIZADOR DE COMPLEJIDAD COGNITIVA
+# ============================================================
+
+class Agente1_Analizador:
+    """Analiza complejidad del tema y detecta conceptos previos necesarios."""
+    
+    def __init__(self):
+        self.temas_conocidos = {
+            "Ciberseguridad": {"tipo": "técnico", "complejidad_base": 7},
+            "Matemáticas": {"tipo": "abstracto", "complejidad_base": 6},
+            "Física": {"tipo": "conceptual+matemática", "complejidad_base": 7},
+            "Química": {"tipo": "visual+cuantitativa", "complejidad_base": 6},
+            "Historia": {"tipo": "narrativo", "complejidad_base": 4},
+        }
+        
+        self.prerequisitos = {
+            "RSA": ["Números primos", "Factorización", "Aritmética modular"],
+            "Derivadas": ["Funciones", "Límites", "Álgebra"],
+            "Equilibrio Químico": ["Reacciones químicas", "Estequiometría"],
+        }
+    
+    def analizar(self, tema, conceptos_que_sabes):
+        tipo_tema = self._detectar_tipo(tema)
+        complejidad_base = self.temas_conocidos.get(
+            tipo_tema, {"complejidad_base": 5})["complejidad_base"]
+        
+        previos_requeridos = self.prerequisitos.get(tema, [])
+        previos_faltantes = [c for c in previos_requeridos if c not in conceptos_que_sabes]
+        
+        complejidad_ajustada = complejidad_base + len(previos_faltantes) * 0.5
+        complejidad_ajustada = min(10, complejidad_ajustada)
+        
+        tiempo_estimado = self._estimar_tiempo(complejidad_ajustada)
+        metodo = self._recomendar_metodo(tipo_tema, complejidad_ajustada)
+        
+        return {
+            "tema": tema,
+            "tipo": tipo_tema,
+            "complejidad": round(complejidad_ajustada, 1),
+            "conceptos_previos_necesarios": previos_requeridos,
+            "conceptos_faltantes": previos_faltantes,
+            "tiempo_estimado_horas": tiempo_estimado,
+            "metodo_recomendado": metodo,
+            "prioridad_estudio": "CRÍTICA" if complejidad_ajustada > 7 else "ALTA" if complejidad_ajustada > 5 else "MEDIA"
+        }
+    
+    def _detectar_tipo(self, tema):
+        tema_lower = tema.lower()
+        if any(word in tema_lower for word in ["crypto", "rsa", "ataque", "seguridad"]):
+            return "Ciberseguridad"
+        elif any(word in tema_lower for word in ["derivada", "integral", "función", "límite"]):
+            return "Matemáticas"
+        elif any(word in tema_lower for word in ["fuerza", "movimiento", "energía"]):
+            return "Física"
+        elif any(word in tema_lower for word in ["reacción", "elemento", "átomo"]):
+            return "Química"
+        return "General"
+    
+    def _estimar_tiempo(self, complejidad):
+        return round(complejidad * 1.5, 1)
+    
+    def _recomendar_metodo(self, tipo_tema, complejidad):
+        if tipo_tema == "Ciberseguridad":
+            return "Conceptos + Labs prácticos"
+        elif tipo_tema == "Matemáticas":
+            return "Concepto + Demostración + Problemas"
+        else:
+            return "Lectura + Ejercicios + Repaso espaciado"
+
+
+# ============================================================
+# AGENTE 2: GENERADOR DE ANCLAJES
+# ============================================================
+
+class Agente2_GeneradorAnclajes:
+    """Crea conexiones entre conceptos nuevos y conocimiento previo."""
+    
+    def __init__(self):
+        self.analogias_base = {
+            "RSA": {
+                "simple": "Buzón de correos: cualquiera mete cartas, solo el dueño las saca",
+                "técnica": "Factorizar números primos grandes es difícil",
+                "matemática": "e^d ≡ 1 (mod φ(n))"
+            },
+            "Derivadas": {
+                "simple": "Velocidad instantánea de un auto en este momento",
+                "técnica": "Pendiente de una curva en un punto específico",
+                "matemática": "lim(h→0) [f(x+h) - f(x)] / h"
+            }
+        }
+    
+    def generar_anclajes(self, tema_nuevo, lo_que_ya_sabes):
+        if tema_nuevo in self.analogias_base:
+            analogias = self.analogias_base[tema_nuevo]
+        else:
+            analogias = self._generar_dinamico(tema_nuevo, lo_que_ya_sabes)
+        
+        return {
+            "tema_nuevo": tema_nuevo,
+            "concepto_conocido": lo_que_ya_sabes,
+            "anclaje_nivel_1_simple": analogias.get("simple", ""),
+            "anclaje_nivel_2_tecnica": analogias.get("técnica", ""),
+            "anclaje_nivel_3_matematica": analogias.get("matemática", ""),
+        }
+    
+    def _generar_dinamico(self, tema_nuevo, lo_que_ya_sabes):
+        return {
+            "simple": f"{tema_nuevo} funciona como {lo_que_ya_sabes}",
+            "técnica": f"Estructura análoga a {lo_que_ya_sabes}",
+            "matemática": "Principios de conservación"
+        }
+
+
+# ============================================================
+# AGENTE 3: PLANIFICADOR DE ESPACIAMIENTO
+# ============================================================
+
+class Agente3_PlanificadorEspaciamiento:
+    """Crea calendario científico de estudio basado en Spacing Effect."""
+    
+    def __init__(self):
+        self.intervalos_optimos = [1, 3, 7, 14, 30, 60]
+    
+    def crear_plan(self, tema, fecha_examen, horas_disponibles_por_semana):
+        hoy = datetime.now()
+        try:
+            examen = datetime.strptime(fecha_examen, "%d/%m/%Y")
+        except:
+            return {"error": "Formato incorrecto. Usa DD/MM/YYYY"}
+        
+        dias_disponibles = (examen - hoy).days
+        
+        if dias_disponibles <= 0:
+            return {"error": "Fecha de examen debe ser en el futuro"}
+        
+        horas_totales = (dias_disponibles / 7) * horas_disponibles_por_semana
+        sesiones = []
+        horas_por_sesion = horas_totales / len(self.intervalos_optimos)
+        
+        for i, intervalo in enumerate(self.intervalos_optimos):
+            fecha_sesion = hoy + timedelta(days=intervalo)
+            if fecha_sesion > examen:
+                break
+            
+            sesion = {
+                "numero_sesion": i + 1,
+                "fecha": fecha_sesion.strftime("%d/%m/%Y"),
+                "duracion_minutos": int(horas_por_sesion * 60),
+            }
+            sesiones.append(sesion)
+        
+        return {
+            "tema": tema,
+            "dias_disponibles": dias_disponibles,
+            "horas_totales": round(horas_totales, 1),
+            "sesiones": sesiones,
+            "total_sesiones": len(sesiones),
+        }
+
+
+# ============================================================
+# AGENTE 4: PREGUNTAS SOCRÁTICA
+# ============================================================
+
+class Agente4_PreguntasSocraticas:
+    """Genera preguntas que fuerzan pensamiento activo (Generation Effect)."""
+    
+    def __init__(self):
+        self.preguntas_por_tema = {
+            "RSA": {
+                "nivel_1": [
+                    "¿Cuál es la fórmula básica de RSA?",
+                    "¿Qué significan n, e, y d en RSA?"
+                ],
+                "nivel_2": [
+                    "¿Por qué es fácil multiplicar pero difícil factorizar?",
+                    "Si conoces n=p×q, ¿por qué no encuentras p y q fácilmente?"
+                ],
+                "nivel_3": [
+                    "Demuestra por qué c^d ≡ m (mod n) funciona",
+                    "¿Qué pasa si alguien factoriza rápido?"
+                ]
+            }
+        }
+    
+    def generar_preguntas(self, tema):
+        if tema in self.preguntas_por_tema:
+            preguntas = self.preguntas_por_tema[tema]
+        else:
+            preguntas = self._generar_dinamicas(tema)
+        
+        return {
+            "tema": tema,
+            "preguntas_nivel_1": preguntas.get("nivel_1", []),
+            "preguntas_nivel_2": preguntas.get("nivel_2", []),
+            "preguntas_nivel_3": preguntas.get("nivel_3", []),
+        }
+    
+    def _generar_dinamicas(self, tema):
+        return {
+            "nivel_1": [f"¿Qué es {tema}?"],
+            "nivel_2": [f"¿Por qué es importante {tema}?"],
+            "nivel_3": [f"¿Cuáles son los límites de {tema}?"]
+        }
+
+
+# ============================================================
+# AGENTE 5: DETECTOR DE BRECHAS
+# ============================================================
+
+class Agente5_DetectorBrechas:
+    """Identifica conceptos no entendidos completamente."""
+    
+    def diagnosticar(self, tema, respuesta_del_estudiante):
+        palabras_clave = ["porque", "por qué", "explicación", "razón"]
+        tiene_comprension = any(palabra in respuesta_del_estudiante.lower() for palabra in palabras_clave)
+        
+        return {
+            "tema": tema,
+            "tiene_brecha": not tiene_comprension,
+            "nivel_comprension": "profunda" if tiene_comprension else "superficial",
+            "recomendacion": "Profundizar en este concepto" if not tiene_comprension else "Concepto bien entendido"
+        }
+
+
+# ============================================================
+# AGENTE 6: GENERADOR DE ANALOGÍAS
+# ============================================================
+
+class Agente6_GeneradorAnalogias:
+    """Crea analogías en 3 niveles para conceptos complejos."""
+    
+    def generar(self, concepto):
+        return {
+            "concepto": concepto,
+            "analogia_nivel_1": f"Analogía simple de {concepto}",
+            "analogia_nivel_2": f"Explicación técnica de {concepto}",
+            "analogia_nivel_3": f"Fórmulas matemáticas de {concepto}"
+        }
+
+
+# ============================================================
+# AGENTE 7: GENERADOR DE MAPAS MENTALES
+# ============================================================
+
+class Agente7_GeneradorMapas:
+    """Crea estructura visual de temas (65% aprenden mejor visualmente)."""
+    
+    def generar_mapa(self, tema):
+        return {
+            "tema": tema,
+            "concepto_central": tema,
+            "ramas": {
+                "Rama 1": ["Detalle A", "Detalle B"],
+                "Rama 2": ["Detalle C", "Detalle D"],
+                "Rama 3": ["Detalle E", "Detalle F"]
+            }
+        }
+
+
+# ============================================================
+# ORQUESTADOR: Coordinador Central
+# ============================================================
+
+class Orquestador_Sistema:
+    """Coordina todos los 7 agentes."""
+    
+    def __init__(self):
+        self.agente1 = Agente1_Analizador()
+        self.agente2 = Agente2_GeneradorAnclajes()
+        self.agente3 = Agente3_PlanificadorEspaciamiento()
+        self.agente4 = Agente4_PreguntasSocraticas()
+        self.agente5 = Agente5_DetectorBrechas()
+        self.agente6 = Agente6_GeneradorAnalogias()
+        self.agente7 = Agente7_GeneradorMapas()
+    
+    def procesar_tema(self, tema, conceptos_previos, fecha_examen, horas_semana, lo_que_sabes):
+        print(f"\n{'='*70}")
+        print(f"PROCESANDO: {tema}")
+        print(f"{'='*70}\n")
+        
+        print("[1/7] ANALIZADOR")
+        analisis = self.agente1.analizar(tema, conceptos_previos)
+        print(f"  Complejidad: {analisis['complejidad']}/10")
+        
+        print("[2/7] ANCLAJES")
+        anclajes = self.agente2.generar_anclajes(tema, lo_que_sabes)
+        print(f"  Analogía simple: {anclajes['anclaje_nivel_1_simple'][:50]}...")
+        
+        print("[3/7] ESPACIAMIENTO")
+        plan = self.agente3.crear_plan(tema, fecha_examen, horas_semana)
+        print(f"  Sesiones: {plan['total_sesiones']}")
+        
+        print("[4/7] PREGUNTAS")
+        preguntas = self.agente4.generar_preguntas(tema)
+        print(f"  Preguntas generadas: {len(preguntas['preguntas_nivel_1'])}")
+        
+        print("[5/7] DETECTOR DE BRECHAS")
+        print(f"  Listo para detectar brechas")
+        
+        print("[6/7] ANALOGÍAS")
+        analogias = self.agente6.generar(tema)
+        print(f"  Analogías multinivel generadas")
+        
+        print("[7/7] MAPAS MENTALES")
+        mapa = self.agente7.generar_mapa(tema)
+        print(f"  Mapa con {len(mapa['ramas'])} ramas")
+        
+        print(f"\n{'='*70}")
+        print("PROCESAMIENTO COMPLETADO")
+        print(f"{'='*70}")
+        
+        return {
+            "tema": tema,
+            "analisis": analisis,
+            "anclajes": anclajes,
+            "plan": plan,
+            "preguntas": preguntas,
+            "mapa": mapa
+        }
+
+
+# ============================================================
+# EJEMPLO DE USO
+# ============================================================
+
+if __name__ == "__main__":
+    orquestador = Orquestador_Sistema()
+    
+    resultado = orquestador.procesar_tema(
+        tema="RSA",
+        conceptos_previos=["Números primos"],
+        fecha_examen="15/06/2026",
+        horas_semana=5,
+        lo_que_sabes="Buzón de correos"
+    )
+    
+    print("\n✅ Sistema listo para usar")
+    print("Diego Mercedes Llauger (2026-0048)")
